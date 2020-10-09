@@ -2,7 +2,7 @@
 #define RESTAURANT_H
 #include <bits/stdc++.h>
 #include "Employee.h"
-using std::string;
+#include "Category.h"
 
 class Restaurant {
 public:
@@ -46,29 +46,29 @@ public:
         std::vector<EmployeeSalary> summary;
         double total = 0;
         for (auto &it : _employees){
-            summary.push_back({it.first, it.second.endMonth()});
-            total += summary[summary.size()].salary;
+            double monthly_salary = it.second.endMonth();
+            summary.push_back({it.first, monthly_salary});
+            total += monthly_salary;
         }
-        summary.push_back({"Total: ", total});
+        summary.push_back({"Total ", total});
         return summary;
     }
 
     void printScheduleForOne(string& name) const {
         auto it = _employees.find(name);
         if (it != _employees.end()) {
-            it->second.printSchedule();
+            it->second.printSchedule(name);
         }
     }
 
     void printScheduleForAll() const {
         for (auto &it : _employees){
-            std::cout << "==============" << it.second.getId() << "==============" << std::endl;
-            it.second.printSchedule();
+            it.second.printSchedule(it.first);
             std::cout << std::endl;
         }
     }
 
-    void markEntrance(string& name) const {
+    void markEntrance(string& name) {
         auto it = _employees.find(name);
         if (it != _employees.end()) {
             it->second.markEntrance();
@@ -82,12 +82,29 @@ public:
         }
     }
 
+    void resetWorkTimeForOne(string& name){
+        auto it = _employees.find(name);
+        if (it != _employees.end()) {
+            it->second.resetWorkTime();
+        }
+    }
+
+    void resetWorkTimeForAll(){
+        for (auto &it : _employees){
+            it.second.resetWorkTime();
+            std::cout << std::endl;
+        }
+    }
+
     void addNewEmployee(string& name, Role role, double salary){
-        _employees.insert({name, Employee(_employees.size()+1 ,name, role, salary)});
+        _employees.insert({std::move(name), Employee(_employees.size()+1, role, salary)});
     }
 
     void removeEmployee(string& name){
+        std::remove((std::to_string(this->getEmployeeId(name))+"entrance.txt").c_str());
+        std::remove((std::to_string(this->getEmployeeId(name))+".txt").c_str());
         _employees.erase(name);
+
     }
 
     void setSalary(string& name, double salary){
@@ -107,5 +124,9 @@ public:
 private:
     std::map<string, Employee> _employees;
 };
+
+std::ostream& operator<<(std::ostream& os, const Restaurant::EmployeeSalary& employee) {
+    return os << "Name: " << employee.Name << " | Salary: " << employee.salary << std::endl;
+}
 
 #endif //RESTAURANT_H
