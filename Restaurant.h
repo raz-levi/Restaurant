@@ -1,324 +1,135 @@
+/*
+ * This project was written by Raz Levi.
+ */
 #ifndef RESTAURANT_H
 #define RESTAURANT_H
-#include <bits/stdc++.h>
+#include <string>
+#include <iostream>
+#include <unordered_set>
+#include <unordered_map>
+#include <queue>
 #include "Employee.h"
 #include "Dish.h"
 #include "Table.h"
+using std::string;
 
 class Restaurant {
 public:
-    explicit Restaurant(unsigned int capacity = 5): _tables(capacity), _total_account(0), _monthly_account(0),
-    _daily_account(0), _best_selling(nullptr) {} // TODO erase default capacity
+    explicit Restaurant(int capacity);
 
     // ================== Employees ==================
-    int getNumberOfEmployees() const {
-        return _employees.size();
-    }
+    int getNumberOfEmployees() const;
 
-    // If Employee doesn't exist- return -1
-    unsigned int getEmployeeId(string& name) const {
-        auto it = _employees.find(name);
-        if (it != _employees.end()) {
-            return it->second.getId();
-        }
-        return -1;
-    }
+    // If Employee doesn't exist: return -1
+    unsigned int getEmployeeId(string& name) const;
 
-    // If Employee doesn't exist- return -1
-    double calculateMonthlySalary(string& name) const{
-        auto it = _employees.find(name);
-        if (it != _employees.end()) {
-            return it->second.calculateMonthlySalary();
-        }
-        return -1;
-    }
+    // If Employee doesn't exist: return -1
+    double calculateMonthlySalary(string& name) const;
 
-    void printScheduleForOne(string& name) const {
-        auto it = _employees.find(name);
-        if (it != _employees.end()) {
-            it->second.printSchedule(name);
-        }
-    }
+    void printScheduleForOne(string& name) const;
 
-    void printScheduleForAll() const {
-        for (auto &it : _employees){
-            it.second.printSchedule(it.first);
-            std::cout << std::endl;
-        }
-    }
+    void printScheduleForAll() const;
 
-    void markEntrance(string& name) {
-        auto it = _employees.find(name);
-        if (it != _employees.end()) {
-            it->second.markEntrance();
-        }
-    }
+    void markEntrance(string& name);
 
-    void markQuit(string& name){
-        auto it = _employees.find(name);
-        if (it != _employees.end()) {
-            it->second.markQuit();
-        }
-    }
+    void markQuit(string& name);
 
-    void resetWorkTimeForOne(string& name){
-        auto it = _employees.find(name);
-        if (it != _employees.end()) {
-            it->second.resetWorkTime();
-        }
-    }
+    void resetWorkTimeForOne(string& name);
 
-    void resetWorkTimeForAll(){
-        for (auto &it : _employees){
-            it.second.resetWorkTime();
-            std::cout << std::endl;
-        }
-    }
+    void resetWorkTimeForAll();
 
-    void addNewEmployee(string& name, Role role, double salary){
-        _employees.insert({std::move(name), Employee(_employees.size()+1, role, salary)});
-    }
+    void addNewEmployee(string& name, Role role, double salary);
 
-    void removeEmployee(string& name){
-        std::remove((std::to_string(this->getEmployeeId(name))+"entrance.txt").c_str());
-        std::remove((std::to_string(this->getEmployeeId(name))+".txt").c_str());
-        _employees.erase(name);
+    void removeEmployee(string& name);
 
-    }
+    void setSalary(string& name, double salary);
 
-    void setSalary(string& name, double salary){
-        auto it = _employees.find(name);
-        if (it != _employees.end()){
-            it->second.setSalary(salary);
-        }
-    }
-
-    void setRole(string& name, Role role){
-        auto it = _employees.find(name);
-        if (it != _employees.end()){
-            it->second.setRole(role);
-        }
-    }
+    void setRole(string& name, Role role);
 
     // ================== Menu ==================
-    void addNewCategory(string& name){
-        _menu.insert({std::move(name), Category()});
-    }
+    void addNewCategory(string& name);
 
-    void removeCategory(string& name){
-        _menu.erase(name);
-    }
+    void removeCategory(string& name);
 
-    void addDish(string& category, string& dish, string& description, int rank, double price){
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-            i->second.addDish(dish, description, rank, price);
-    }
+    void addDish(string& category, string& dish, string& description, int rank, double price);
 
     void addDishWithProducts(string& category, string& dish, string& description, std::unordered_set<Product>& products,
-                             int rank, double price){
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-            i->second.addDishWithProducts(dish, description, products, rank, price);
-    }
+                             int rank, double price);
 
-    void removeDish(string& category, string& dish){
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-            i->second.removeDish(dish);
-    }
+    void removeDish(string& category, string& dish);
 
-    void addProductToDish(string& category, string& dish, Product product){
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-            i->second.addProductToDish(dish, product);
-    }
+    void addProductToDish(string& category, string& dish, Product product);
 
-    void removeProductFromDish(string& category, string& dish, Product product){
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-            i->second.removeProductFromDish(dish, product);
-    }
+    void removeProductFromDish(string& category, string& dish, Product product);
 
-    void changeDishName(string& category, string& dish, string& name){
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-            i->second.changeDishName(dish, name);
-    }
+    void changeDishName(string& category, string& dish, string& name);
 
-    void changeDishDescription(string& category, string& dish, string& description){
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-            i->second.changeDishDescription(dish, description);
-    }
+    void changeDishDescription(string& category, string& dish, string& description);
 
-    void outOfVariety(string& category, string& dish){
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-            i->second.outOfVariety(dish);
-    }
+    void outOfVariety(string& category, string& dish);
 
-    void putInVariety(string& category, string& dish){
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-            i->second.putInVariety(dish);
-    }
+    void putInVariety(string& category, string& dish);
 
-    void setDishPrice(string& category, string& dish, double price){
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-          i->second.setDishPrice(dish, price);
-    }
+    void setDishPrice(string& category, string& dish, double price);
 
-    void setDishRank(string& category, string& dish, int rank){
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-            i->second.setDishRank(dish, rank);
-    }
+    void setDishRank(string& category, string& dish, int rank);
 
-    void printMenu() const {
-        for (auto& it : _menu) {
-            it.second.printCategory(it.first);
-        }
-    }
+    void printMenu() const;
 
-    void printDishProduct(string& category, string& dish) const {
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-           i->second.printProductsDish(dish);
-    }
+    void printDishProduct(string& category, string& dish) const;
 
-    void printBestDishes(string& category, unsigned int k) {
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-            i->second.printBestDishes(k);
-    }
+    void printBestDishes(string& category, int k);
 
     // If Dish doesn't exist- return -1
-    int getDishRank(string& category, string& dish) const {
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-            return i->second.getDishRank(dish);
-        else
-            return -1;
-    }
+    int getDishRank(string& category, string& dish) const;
 
     // If Dish doesn't exist- return -1
-    double getDishPrice(string& category, string& dish) const {
-        auto i = _menu.find(category);
-        if (i != _menu.end())
-            return i->second.getDishPrice(dish);
-        else
-            return -1;
-    }
+    double getDishPrice(string& category, string& dish) const;
 
     // ================== Tables ==================
 
-    void setCapacity(int factor) {
-        _tables.setCapacity(factor);
-    }
+    void increaseCapacity(int factor);
 
-    unsigned int getNumOfCustomer() const {
-        return _tables.getNumOfCustomer();
-    }
+    unsigned int getNumOfCustomer() const;
 
-    unsigned int getNumOfAvailableTables() const {
-        return _tables.getNumOfAvailableTables();
-    }
+    unsigned int getNumOfAvailableTables() const;
 
-    void seatCustomer(){
-        _tables.seatCustomer();
-    }
+    // return -1 if all tables are busy
+    unsigned int seatCustomer();
 
-    double getFinalBill(int num){
-        std::cout << "============== Bill ==============" << std::endl;
-        double bill = _tables.getFinalBill(num);
-        std::cout << std::endl << "============== Total to pay: " << bill << " ==============" << std::endl;
-        _daily_account += bill;
-        return bill;
-    }
+    // return -1 if num is illegal
+    double getFinalBill(unsigned int num);
 
     // return -1 if table is available
-    double getCurrentBill(int num) const {
-        return _tables.getCurrentBill(num);
-    }
+    double getCurrentBill(int num) const;
 
-    int getNumOfOrders(int num) const {
-        return _orders.size();
-    }
+    int getNumOfOrders() const;
 
-    void giveCredit(int num, double credit){
-        _tables.giveCredit(num, credit);
-    }
+    void giveCredit(int num, double credit);
 
-    void orderDish(int num, string& category, string& dish){
-        auto cat = _menu.find(category);
-        if (cat == _menu.end()) return;
-        Dish* ordered = cat->second.getDish(dish);
-        if (!ordered || !ordered->isAvailable()) return;
-        if (_tables.orderDish(num, ordered)) {
-            ordered->orderDish();
-            if (ordered->getNumberOfSales() > _best_selling->getNumberOfSales())
-                _best_selling = ordered;
-            _orders.push(ordered);
-        }
-    }
+    void orderDish(int num, string& category, string& dish);
 
-    void supplyDish(){
-        _orders.pop();
-    }
+    void supplyDish();
 
     // ================== Finance  ==================
 
-    void endDay(){
-        _monthly_account += _daily_account;
-        _daily_account = 0;
-    }
+    void endDay();
 
-    void endMonth(){
-        std::cout << "============== Employees Report ==============" << std::endl;
-        double total = 0;
-        for (auto &it : _employees){
-            double monthly_salary = it.second.endMonth();
-            total += monthly_salary;
-            std::cout << "Name: " << it.first << " | Salary: " << monthly_salary << std::endl << std::endl;
-        }
-        std::cout << "============== Monthly Report ==============" << std::endl;
-        std::cout << "Total salaries: " << total << std::endl;
-        std::cout << "Total costumers: " << _monthly_account << std::endl;
-        _monthly_account -= total;
-        std::cout << "Total this month: " << _monthly_account << std::endl;
-        _total_account += _monthly_account;
-        _monthly_account = 0;
-    }
+    void endMonth();
 
-    double getDailyAccount() const {
-        return _daily_account;
-    }
+    double getDailyAccount() const;
 
-    double getMonthlyAccount() const {
-        return _monthly_account;
-    }
+    double getMonthlyAccount() const;
 
-    double getTotalAccount() const {
-        return _total_account;
-    }
+    double getTotalAccount() const;
 
     // ================== Statistics  ==================
 
-    string getBestSellingDish() const {
-        if (_best_selling)
-            return _best_selling->getName();
-        return "The menu is empty";
-    }
+    string getBestSellingDish() const;
 
-    unsigned int getTotalNumberOfCustomers() const {
-        return _tables.getNumOfCustomer();
-    }
+    unsigned int getTotalNumberOfCustomers() const;
 
-    unsigned int getMostExpensiveBill() const {
-        return _tables.getMostExpensiveBill();
-    }
+    double getMostExpensiveBill() const;
 
 private:
     std::unordered_map<string, Employee> _employees;

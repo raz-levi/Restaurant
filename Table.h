@@ -1,44 +1,27 @@
 #ifndef TABLE_H
 #define TABLE_H
-#include <bits/stdc++.h>
+#include <iostream>
+#include <queue>
+#include <stack>
+#include <unordered_map>
 #include "Dish.h"
 using std::string;
 
 class Table{
 public:
-    explicit Table(): _available(true), _bill(0) {}
+    explicit Table();
 
-    bool isAvailable() const {
-        return _available;
-    }
+    bool isAvailable() const;
 
-    bool seatCustomer() {
-        return _available = false;
-    }
+    bool seatCustomer();
 
-    double getCurrentBill() const {
-        return _bill;
-    }
+    double getCurrentBill() const;
 
-    double getFinalBill() {
-        double bill = _bill;
-        _bill = 0;
-        _available = true;
-        for (int i=0; i<_orders.size(); i++){
-            std::cout << *_orders.front();
-            _orders.pop();
-        }
-        return bill;
-    }
+    double getFinalBill();
 
-    void orderDish(Dish* dish){
-        _orders.push(dish);
-        _bill += dish->getPrice();
-    }
+    void orderDish(Dish* dish);
 
-    void getCredit(double credit){
-        _bill -= credit;
-    }
+    void getCredit(double credit);
 
 private:
     bool _available;
@@ -48,89 +31,37 @@ private:
 
 class Tables{
 public:
-    explicit Tables(unsigned int capacity): _customers(0), _expensive(0) {
-        for (int i=1; i<= capacity; i++){
-            _tables.insert({i,Table()});
-            _available.push(i);
-        }
-    }
+    explicit Tables(int capacity);
 
-    // Set capacity by factor: new_capacity = old_capacity + factor (factor can be negative)
-    void setCapacity(int factor) {
-        if (factor >= 0) {
-            for (unsigned int i=_tables.size() + 1; i<= _tables.size() + factor; i++){ //TODO check!
-                _tables.insert({i,Table()});
-                _available.push(i);
-            }
-        }
-        else if (getNumOfAvailableTables() >= factor){
-            for (int i=0; i<std::abs(factor); i++) {
-                int available = _available.top();
-                _tables.erase(available);
-                _available.pop();
-            }
-        }
-    }
+    // increase capacity by factor: new_capacity = old_capacity + factor (factor can not be negative)
+    void increaseCapacity(int factor);
 
-    unsigned int getNumOfCustomer() const {
-        return _tables.size() - _available.size();
-    }
+    unsigned int getNumOfCustomer() const;
 
-    unsigned int getNumOfAvailableTables() const {
-        return _available.size();
-    }
+    unsigned int getNumOfAvailableTables() const;
 
-    void seatCustomer(){
-        if (!_available.empty()){
-            _tables.find(_available.top())->second.seatCustomer();
-            _available.pop();
-            _customers++;
-        }
-    }
+    // return -1 if all tables are busy
+    unsigned int seatCustomer();
 
-    double getFinalBill(int num){
-        _available.push(num);
-        double bill = _tables.find(num)->second.getFinalBill();
-        if (_expensive < bill)
-            _expensive = bill;
-        return bill;
-    }
+    double getFinalBill(unsigned int num);
 
-    double getCurrentBill(int num) const {
-        Table table = _tables.find(num)->second;
-        if (!table.isAvailable())
-            return table.getCurrentBill();
-        return -1;
-    }
+    double getCurrentBill(int num) const;
 
-    void giveCredit(int num, double credit){
-        Table table = _tables.find(num)->second;
-        if (!table.isAvailable())
-             table.getCredit(credit);
-    }
+    void giveCredit(int num, double credit);
 
-    bool orderDish(int num_table, Dish* dish){
-        Table table = _tables.find(num_table)->second;
-        if (!table.isAvailable()) {
-            table.orderDish(dish);
-            return true;
-        }
-        return false;
-    }
+    bool orderDish(int num_table, Dish* dish);
 
-    unsigned int getNumberOfCustomers() const {
-        return _customers;
-    }
+    unsigned int getCapacity() const;
 
-    unsigned int getMostExpensiveBill() const {
-        return _expensive;
-    }
+    unsigned int getTotalNumberOfCustomers() const;
+
+    double getMostExpensiveBill() const;
 
 private:
     std::unordered_map<int, Table> _tables;
     std::stack<int> _available;
     unsigned int _customers;
-    unsigned int _expensive;
+    double _expensive;
 };
 
 #endif //TABLE_H
