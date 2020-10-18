@@ -7,6 +7,6 @@ This procedure frequently resulted in salary issues of inaccuracies and errors.
 
 As a student in the Technion – Israel Institute of Technology in the Computer Science faculty, now in my 4th semester, I realized that I could contribute and help the bakery solve this problem.
 
-I developed a system for managing employees' working hours. Later, I realized that I could upgrade the system and added functionality that enabled full restaurant management: management of the working hours system, menu, customers, bookkeeping and statistics. the menu prices and costing, customers, income and expenses bookkeeping and also performance statistics.
+I developed a system for managing employees' working hours. Later, I realized that I could upgrade the system and added functionality that enabled full restaurant management: management of the working hours system, menu, customers, bookkeeping and statistics.
 
 In writing the system I used many and varied data structures and different algorithms so that each function works efficiently and correctly.
